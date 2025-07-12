@@ -1,0 +1,246 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>QR Code Generator</title>
+<!-- Google Fonts for a refined look -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<style>
+  /* Reset and base styles */
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #f5f7fa;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    color: #333;
+  }
+
+  /* Container card for content */
+  .container {
+    background: #fff;
+    margin-top: 60px;
+    max-width: 700px;
+    width: 100%;
+    padding: 50px 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .container:hover {
+    box-shadow: 0 8px 40px rgba(0,0,0,0.07);
+    transform: translateY(-2px);
+  }
+
+  /* Heading style */
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    color: #222;
+    text-align: center;
+  }
+
+  /* Subtle, professional auth links */
+  .auth-links {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+  }
+
+  /* Style for login/register links */
+  .auth-links a {
+    color: #555;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+
+  .auth-links a:hover {
+    color: #222;
+  }
+
+  /* Style for logout link to make it look subtle and elegant */
+  .auth-links a.logout {
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.05);
+    font-weight: 500;
+    transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .auth-links a.logout:hover {
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    color: #222;
+  }
+
+  /* Message box */
+  .message {
+    background-color: #e0f7fa;
+    color: #006064;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    max-width: 100%;
+    width: 100%;
+    margin-bottom: 30px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+  }
+
+  /* Form styles */
+  form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  input[type="text"] {
+    padding: 16px 20px;
+    font-size: 1rem;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  input[type="text"]:focus {
+    border-color: #00796b;
+    box-shadow: 0 0 8px rgba(0,121,107,0.2);
+  }
+
+  /* Submit button styling */
+  button {
+    padding: 16px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    background-color: #00796b;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+
+  button:hover {
+    background-color: #004d40;
+    transform: translateY(-1px);
+  }
+
+  /* QR code section */
+  .qr-section {
+    margin-top: 50px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .qr-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #222;
+  }
+
+  .qr-image {
+    max-width: 350px;
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s;
+  }
+
+  .qr-image:hover {
+    transform: scale(1.02);
+  }
+
+  /* Download button style */
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px;
+    background-color: #0097a7;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+
+  .download-btn:hover {
+    background-color: #006064;
+    transform: translateY(-1px);
+  }
+
+  /* Responsive adjustments */
+  @media(max-width: 768px) {
+    h1 {
+      font-size: 1.75rem;
+    }
+    .qr-image {
+      max-width: 90%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Generate Your QR Code</h1>
+
+    <!-- User status and actions -->
+    <div class="auth-links">
+        {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="logout"><i class="fas fa-sign-out-alt"></i> Logout ({{ user.username }})</a>
+        {% else %}
+            <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="{% url 'register' %}"><i class="fas fa-user-plus"></i> Register</a>
+        {% endif %}
+    </div>
+
+    <!-- Message -->
+    {% if message %}
+        <div class="message">{{ message }}</div>
+    {% endif %}
+
+    <!-- Input form -->
+    <form method="post" action="">
+        {% csrf_token %}
+        <input type="text" name="data" placeholder="Enter text or URL" value="{{ data }}" required />
+        <button type="submit"><i class="fas fa-qrcode"></i> Generate</button>
+    </form>
+
+    <!-- QR Code output -->
+    {% if qr_image %}
+        <div class="qr-section">
+            <h2>Your QR Code</h2>
+            <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code" class="qr-image" />
+            <br />
+            <a href="data:image/png;base64,{{ qr_image }}" download="qrcode.png" class="download-btn">
+                <i class="fas fa-download"></i> Download
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

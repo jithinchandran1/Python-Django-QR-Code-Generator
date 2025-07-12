@@ -1,0 +1,161 @@
+<!-- templates/register.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Register - QR Code App</title>
+    <style>
+        /* Reset and base styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 40px 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        /* Messages styling */
+        .messages {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .messages p {
+            margin: 0;
+            padding: 10px;
+            background-color: #ffe5e5;
+            color: #cc0000;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        /* Form styles */
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+            display: block;
+            width: 100%;
+        }
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        /* Password requirements box */
+        .password-requirements {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #eef9f9;
+            border: 1px solid #bbe1e1;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .password-requirements p {
+            margin-top: 0;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .password-requirements ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        /* Submit button styles */
+        button {
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        /* Login link styling */
+        p.login {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+        p.login a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        p.login a:hover {
+            text-decoration: underline;
+        }
+        /* Field error styling */
+        .field-errors {
+            color: red;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Register</h1>
+        <!-- Show messages -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <!-- Registration form -->
+        <form method="post" action="">
+            {% csrf_token %}
+            {% for field in form %}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-errors">{{ field.errors }}</div>
+                {% endif %}
+            {% endfor %}
+            <button type="submit">Register</button>
+        </form>
+        <!-- Password requirements info -->
+        <div class="password-requirements">
+            <p><strong>Password must:</strong></p>
+            <ul>
+                <li>Be at least 8 characters long</li>
+                <li>Contain at least 1 number</li>
+                <li>Not include the username</li>
+            </ul>
+        </div>
+        <!-- Link to login page -->
+        <p class="login">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+    </div>
+</body>
+</html>
